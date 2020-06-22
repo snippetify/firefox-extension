@@ -8,8 +8,7 @@
     ],
     "globals": {
         "$": "readonly",
-        "Vue": "readonly",
-        "chrome": "readonly",
+        "browser": "readonly",
         "Atomics": "readonly",
         "SimpleMDE": "readonly",
         "SimpleBar": "readonly",

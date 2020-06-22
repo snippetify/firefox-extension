@@ -5,6 +5,7 @@
 */
 export const CS_TARGET = 'cs_target' // Content scripts
 export const GO_TO_SNIPPET = 'go_to_snippet'
+export const REFRESH_IFRAME = 'refresh_iframe'
 export const SNIPPETIFY_DOMAIN = 'snippetify.com'
 export const CS_FOUND_SNIPPETS = 'cs_found_snippets'
 export const CS_SNIPPETS_COUNT = 'cs_snippets_count'

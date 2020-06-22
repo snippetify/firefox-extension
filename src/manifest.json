@@ -28,10 +28,12 @@
     },
     "content_scripts": [{
         "matches": [
-            "http://*/*",
-            "https://*/*"
+            "*://*/*"
         ],
-        "exclude_globs": ["*snippetify.com*", "*localhost*"],
+        "exclude_globs": [
+            "*snippetify.com*", 
+            "*localhost*"
+        ],
         "css": [
             "css/contentscripts.min.css"
         ],
@@ -43,7 +45,6 @@
         "all_frames": false
     }],
     "background": {
-        "persistent": false,
         "scripts": ["js/background.min.js"]
     },
     "permissions": [
@@ -51,14 +52,13 @@
         "storage",
         "cookies",
         "activeTab",
-        "background",
         "http://*/*",
         "https://*/*",
         "contextMenus",
         "webNavigation",
         "*://*.google.com/",
-        "*://snippetify.com/",
-        "*://api.snippetify.com/"
+        "*://snippetify.com/*",
+        "*://api.snippetify.com/*"
     ],
     "web_accessible_resources": [
         "img/*.png"

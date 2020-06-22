@@ -2,6 +2,7 @@ import $ from 'jquery'
 import {
     CS_TARGET,
     SNIPPETIFY_URL,
+    REFRESH_IFRAME,
     CS_SNIPPETS_COUNT,
     SNIPPETIFY_DOMAIN,
     SNIPPETIFY_API_URL,
@@ -27,7 +28,7 @@ class Background {
      * @returns void
     */
     onInstalled () {
-        chrome.runtime.onInstalled.addListener(() => {
+        browser.runtime.onInstalled.addListener(() => {
             this.createContextMenu()
             this.saveCookieToStorage()
         })
@@ -39,16 +40,16 @@ class Background {
     */
     createContextMenu () {
         // Create menu
-        chrome.contextMenus.create({
+        browser.contextMenus.create({
             id: 'snippetifyContextMenu',
             title: 'Save snippet',
             contexts: ['selection']
         })
 
         // Add listener
-        chrome.contextMenus.onClicked.addListener(function (info) {
-            chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-                chrome.tabs.sendMessage(tabs[0].id, {
+        browser.contextMenus.onClicked.addListener(info => {
+            browser.tabs.query({ active: true, currentWindow: true }).then(tabs => {
+                browser.tabs.connect(tabs[0].id).postMessage({
                     target: CS_TARGET,
                     type: REVIEW_SELECTED_SNIPPET,
                     payload: { title: '', code: info.selectionText, description: '', tags: [], type: 'wiki' }
@@ -62,14 +63,14 @@ class Background {
      * @returns void
     */
     saveCookieToStorage () {
-        chrome.cookies.get({ url: SNIPPETIFY_URL, name: 'token' }, cookie => {
+        browser.cookies.get({ url: SNIPPETIFY_URL, name: 'token' }).then(cookie => {
             const value = ((cookie || {}).value || '')
             if (value.length > 1) {
-                chrome.storage.local.set({ [SNIPPETIFY_API_TOKEN]: value }, () => {
+                browser.storage.local.set({ [SNIPPETIFY_API_TOKEN]: value }).then(() => {
                     this.authenticateUser(value)
                 })
             } else {
-                chrome.storage.local.remove(SNIPPETIFY_API_TOKEN, () => {
+                browser.storage.local.remove(SNIPPETIFY_API_TOKEN).then(() => {
                     this.logoutUser()
                 })
             }
@@ -82,14 +83,14 @@ class Background {
      * @returns void
     */
     cookieEventListener () {
-        chrome.cookies.onChanged.addListener(e => {
+        browser.cookies.onChanged.addListener(e => {
             if ((e.cookie || {}).domain !== SNIPPETIFY_DOMAIN) return
             if (e.removed) {
-                chrome.storage.local.remove(SNIPPETIFY_API_TOKEN, () => {
+                browser.storage.local.remove(SNIPPETIFY_API_TOKEN).then(() => {
                     this.logoutUser()
                 })
             } else {
-                chrome.storage.local.set({ [SNIPPETIFY_API_TOKEN]: e.cookie.value }, () => {
+                browser.storage.local.set({ [SNIPPETIFY_API_TOKEN]: e.cookie.value }).then(() => {
                     this.authenticateUser(e.cookie.value)
                 })
             }
@@ -102,26 +103,19 @@ class Background {
      * @returns void
     */
     navigationEventListener () {
-        // Listen for tab changed
-        chrome.tabs.onActivated.addListener(info => {
-            chrome.tabs.sendMessage(info.tabId, { target: CS_TARGET, type: CS_SNIPPETS_COUNT }, e => {
-                if (e) chrome.browserAction.setBadgeText({ text: `${e.payload || ''}` })
-            })
-        })
-
-        // Listen for page loaded
-        chrome.webNavigation.onCompleted.addListener(info => {
-            chrome.tabs.sendMessage(info.tabId, { target: CS_TARGET, type: CS_SNIPPETS_COUNT }, e => {
-                if (e) chrome.browserAction.setBadgeText({ text: `${e.payload || ''}` })
-            })
-        })
-
         // On url changed
-        chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-            chrome.tabs.sendMessage(tabId, { target: CS_TARGET, type: CS_SNIPPETS_COUNT }, e => {
-                if (e) chrome.browserAction.setBadgeText({ text: `${e.payload || ''}` })
+        browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+            browser.browserAction.setBadgeText({ text: '' })
+            if (tab.url.includes('snippetify.com')) {
+                browser.browserAction.disable(tabId)
+                return
+            }
+            const port = browser.tabs.connect(tabId)
+            port.postMessage({ target: CS_TARGET, type: CS_SNIPPETS_COUNT })
+            port.onMessage.addListener(data => {
+                if (data) browser.browserAction.setBadgeText({ text: `${data.payload || ''}` })
             })
-        })
+        }, { urls: ['*://*/*'] })
     }
 
     /**
@@ -139,9 +133,10 @@ class Background {
                 Authorization: `Bearer ${token}`
             }
         }).done(res => {
-            chrome.storage.local.set({ [SNIPPETIFY_SAVE_USER]: res.data })
+            browser.storage.local.set({ [SNIPPETIFY_SAVE_USER]: res.data })
+            this.postMessageToTabs({ target: CS_TARGET, type: REFRESH_IFRAME }) // Refresh iframe
         }).fail((xhr, status) => {
-            chrome.storage.local.remove(SNIPPETIFY_SAVE_USER)
+            browser.storage.local.remove(SNIPPETIFY_SAVE_USER)
         })
     }
 
@@ -150,8 +145,21 @@ class Background {
      * @returns void
     */
     logoutUser () {
-        chrome.storage.local.remove(SNIPPETIFY_API_TOKEN)
-        chrome.storage.local.remove(SNIPPETIFY_SAVE_USER)
+        browser.storage.local.remove(SNIPPETIFY_API_TOKEN)
+        browser.storage.local.remove(SNIPPETIFY_SAVE_USER)
+        this.postMessageToTabs({ target: CS_TARGET, type: REFRESH_IFRAME }) // Refresh iframe
+    }
+
+    /**
+     * Post message to tabs.
+     * @returns void
+    */
+    postMessageToTabs (payload) {
+        browser.tabs.query({}, tabs => {
+            tabs.forEach(tab => {
+                browser.tabs.connect(tab.id).postMessage(payload)
+            })
+        })
     }
 }
 
