@@ -1,0 +1,8 @@
+node_modules
+temp
+tmp
+.tmp
+dist
+.sass-cache
+package
+*.zip

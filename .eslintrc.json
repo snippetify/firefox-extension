@@ -1,0 +1,27 @@
+{
+    "env": {
+        "es6": true,
+        "browser": true
+    },
+    "extends": [
+        "standard"
+    ],
+    "globals": {
+        "$": "readonly",
+        "Vue": "readonly",
+        "chrome": "readonly",
+        "Atomics": "readonly",
+        "SimpleMDE": "readonly",
+        "SimpleBar": "readonly",
+        "CodeMirror": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": ["error", 4]
+    },
+    "parser": "babel-eslint"
+}

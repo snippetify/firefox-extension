@@ -1,0 +1,39 @@
+.snippetify-iframe {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 1000000!important;
+    border: 0 none transparent!important;
+    background-color: transparent!important;
+    &.hide {
+        width: 0%!important;
+        height: 0%!important;
+        display: none!important;
+        position: relative!important;
+    }
+}
+.snippetify-snippet-wrapper {
+    position: relative!important;
+    .snippet-action {
+        top: 5px;
+        right: 5px;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        border-radius: 50px;
+        background-color: #ff5722;
+        background-image: url("chrome-extension://__MSG_@@extension_id__/img/icon_48.png");
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        background-size: 20px;
+        box-shadow: 1px 1px 4px rgba($color: #000000, $alpha: .3);
+        img {
+            height: auto!important;
+            max-width: 100%!important;
+        }
+    }
+}
