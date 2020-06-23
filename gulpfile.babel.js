@@ -38,8 +38,6 @@ function cssMinify () {
 
 function cssVendor () {
     return src([
-        'node_modules/codemirror/lib/codemirror.css',
-        'node_modules/simplemde/dist/simplemde.min.css',
         'node_modules/simplebar/dist/simplebar.min.css',
         'node_modules/bootstrap/dist/css/bootstrap.min.css',
         'node_modules/@fortawesome/fontawesome-free/css/all.min.css'
@@ -71,16 +69,13 @@ function jsRollup () {
 function jsMinify () {
     return src('tmp/js/*.js')
         .pipe(rename({ suffix: '.min' }))
-        // .pipe(uglify())
+        .pipe(uglify())
         .pipe(dest('dist/js'))
 }
 
 function jsVendor () {
     return src([
-        'node_modules/vue/dist/vue.min.js',
         'node_modules/jquery/dist/jquery.min.js',
-        'node_modules/codemirror/lib/codemirror.js',
-        'node_modules/simplemde/dist/simplemde.min.js',
         'node_modules/simplebar/dist/simplebar.min.js',
         'node_modules/bootstrap/dist/js/bootstrap.min.js'
     ])
@@ -130,7 +125,7 @@ function jsLint () {
 }
 
 function zipFiles () {
-    return src('dist')
+    return src('dist/*')
         .pipe(zip('snippetify.zip'))
         .pipe(dest('./'))
 }
