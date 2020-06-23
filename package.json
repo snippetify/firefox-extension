@@ -1,5 +1,5 @@
 {
-  "name": "snippetify-chrome-extension",
+  "name": "snippetify-firefox-extension",
   "version": "1.0.0",
   "description": "Grab snippets from any pages and save them to snippetify",
   "scripts": {
@@ -52,12 +52,10 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
     "bootstrap": "^4.5.0",
-    "codemirror": "^5.53.2",
+    "handlebars": "^4.7.6",
     "jquery": "^3.5.1",
     "lodash": "^4.17.15",
     "popper.js": "^1.16.1",
-    "simplebar": "^5.2.0",
-    "simplemde": "^1.11.2",
-    "vue": "^2.6.11"
+    "simplebar": "^5.2.0"
   }
 }
