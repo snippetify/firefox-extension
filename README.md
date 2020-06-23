@@ -33,7 +33,7 @@ Load it to firefox (about:debugging) by selecting any file on the dist folder, a
 
 ## Changelog
 
-Please see [CHANGELOG](https://github.com/spatie/laravel-translatable/blob/master/CHANGELOG.md) for more information what has changed recently.
+Please see [CHANGELOG](https://github.com/snippetify/firefox-extension/blob/master/CHANGELOG.md) for more information what has changed recently.
 
 ## Testing
 
