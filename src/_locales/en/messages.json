@@ -1,10 +1,10 @@
 {
     "appName": {
-        "message": "Snippetify",
+        "message": "Snippet Grabber",
         "description": ""
     },
     "appDescription": {
-        "message": "Snippetify",
+        "message": "Save any snippets to Snippetify for later use.",
         "description": ""
     },
     "tooltip": {
