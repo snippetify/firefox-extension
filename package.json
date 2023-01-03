@@ -1,7 +1,7 @@
 {
   "name": "snippetify-firefox-extension",
-  "version": "1.0.0",
-  "description": "Grab snippets from any pages and save them to snippetify",
+  "version": "1.0.1",
+  "description": "Save code snippet from anywhere on the web",
   "scripts": {
     "build": "gulp",
     "watch": "gulp watch",
